@@ -123,6 +123,8 @@ public class BuildingCreatorManager : MonoBehaviour
         isPlacingBuilding = false;
         buildingCreatorHolder.gameObject.SetActive(false);
         Instantiate(actualBuilding.gameObject, buildingCreatorHolder.transform.position, quaternion.identity);
+        GameManager.instance.AddBuilding(actualBuilding);
+        actualBuilding = null;
     }
     #endregion
 }
