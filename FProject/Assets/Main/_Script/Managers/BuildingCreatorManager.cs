@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class BuildingCreatorManager : MonoBehaviour
 {
     public static BuildingCreatorManager instance;
+    [Header("Placement System")]
     public Grid grid;
     public GameObject buildingCreatorHolder;
     private SpriteRenderer buildingCreatorSpriteRenderer;
-
     public Color validPlacementColor = Color.green;
     public Color invalidPlacementColor = Color.red;
     private bool isValidPlacement = true;
     private bool isPlacingBuilding = false;
     private Building actualBuilding;
+    [Header("UI Buildings")]
+    public Color cantBuyColor;
+    public Color flickBuyColor;
     private void Awake()
     {
         if (BuildingCreatorManager.instance) Destroy(gameObject);

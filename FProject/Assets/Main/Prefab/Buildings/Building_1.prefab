@@ -46,6 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 838d512ace0b015418c10cf1cdce17c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cost:
+    resource: 0
+    amount: 1
   constructionTime: 5
   buildingSize:
   - position: {x: 0, y: 0}

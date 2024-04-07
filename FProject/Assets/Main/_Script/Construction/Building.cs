@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 public class Building : MonoBehaviour
 {
+    [SerializeField] private PlayerResources cost;
     [SerializeField] private float constructionTime;
     public BuildingSize[] buildingSize; // Tamaño en la grid (en unidades de grid)
     [SerializeField] private Resource[] resourceGeneration;
     public Sprite Sprite => gameObject.GetComponent<SpriteRenderer>().sprite;
+    public PlayerResources Cost => cost;
     private bool isWorking;
 
     private async void Awake()

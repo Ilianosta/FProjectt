@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public List<PlayerResources> playerResources = new List<PlayerResources>();
     private List<Building> myBuildings = new List<Building>();
     public void AddBuilding(Building building) => myBuildings.Add(building);
+    public PlayerResources GetResource(Building.Resources resource) => playerResources.Find(x => x.resource == resource);
     private void Awake()
     {
         if (GameManager.instance) Destroy(gameObject);
