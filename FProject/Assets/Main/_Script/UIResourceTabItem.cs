@@ -8,5 +8,5 @@ public class UIResourceTabItem : MonoBehaviour
     public TMP_Text resName;
     public TMP_Text resAmount;
 
-    [HideInInspector] public BuildingConstruction.Resources resource;
+    [HideInInspector] public Building.Resources resource;
 }

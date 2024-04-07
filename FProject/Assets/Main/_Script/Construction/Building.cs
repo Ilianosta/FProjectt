@@ -1,108 +1,77 @@
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 public class Building : MonoBehaviour
 {
-    public BuildingSize[] buildginColls; // Tamaño en la grid (en unidades de grid)
-    public Color validPlacementColor = Color.green;
-    public Color invalidPlacementColor = Color.red;
+    [SerializeField] private float constructionTime;
+    public BuildingSize[] buildingSize; // Tamaño en la grid (en unidades de grid)
+    [SerializeField] private Resource[] resourceGeneration;
+    public Sprite Sprite => gameObject.GetComponent<SpriteRenderer>().sprite;
+    private bool isWorking;
 
-    [SerializeField] private Grid grid;
-    private SpriteRenderer spriteRenderer;
-    private bool isValidPlacement = true;
-
-    void Start()
+    private async void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        UpdatePlacementColor();
+        await ConstructBuilding();
     }
-
-    void Update()
+    private void Update()
     {
-        // Actualiza el color de acuerdo a si es una posición de construcción válida
-        UpdatePlacementColor();
+        if (!isWorking) return;
 
-        // Mover el objeto con el mouse
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = 0f;
-        transform.position = GetGridPosition(mousePos);
-
-        // Colocar el objeto al presionar el botón izquierdo del ratón
-        if (Input.GetMouseButtonDown(0))
+        foreach (Resource resourceGen in resourceGeneration)
         {
-            if (isValidPlacement)
+            if (resourceGen.UpdateCounter <= 0)
             {
-                // Aquí puedes colocar el objeto en la posición de la grid
-                // Por ejemplo, puedes instanciar otro objeto o realizar otra acción
-                Debug.Log("Objeto colocado en posición válida!");
-            }
-            else
-            {
-                Debug.Log("No se puede colocar en esta posición.");
+                resourceGen.ResetCounter();
+                AddResources(resourceGen.resource, resourceGen.amount);
             }
         }
     }
 
-    // Obtiene la posición de la grid basada en la posición del mouse
-    Vector3 GetGridPosition(Vector3 position)
+    private async Task ConstructBuilding()
     {
-        Vector3Int cellPosition = grid.WorldToCell(position);
-        Vector3 result = grid.CellToWorld(cellPosition);
-        result.z = 0f;
-        return result;
-    }
-
-    // Actualiza el color del objeto según la validez de la posición de la grid
-    void UpdatePlacementColor()
-    {
-        Vector3Int cellPosition = grid.WorldToCell(transform.position);
-        isValidPlacement = !IsOverlapping();
-
-        // Cambiar el color según la validez
-        spriteRenderer.color = isValidPlacement ? validPlacementColor : invalidPlacementColor;
-    }
-
-    // Verifica si hay algún objeto en la posición de la grid
-    bool IsOverlapping()
-    {
-        List<Collider2D> colliders = new List<Collider2D>();
-        foreach (var coll in buildginColls)
+        float timer = constructionTime;
+        while (timer > 0)
         {
-            colliders.AddRange(Physics2D.OverlapBoxAll(ColliderPosition(coll.position), new Vector2(coll.sizeX, coll.sizeY), 0));
+            await Task.Delay(1000);
+            timer -= 1;
+            // Debug.Log("timer: " + timer);
         }
+        isWorking = true;
+        // Debug.Log("iniciando produccion");
+    }
 
-        foreach (var collider in colliders)
+    private void AddResources(Resources resource, float amount)
+    {
+        GameManager.instance.SetResource(resource, amount);
+    }
+
+    [System.Serializable]
+    private class Resource
+    {
+        [SerializeField] private Resources _resource;
+        [SerializeField] private float _amount;
+        [SerializeField] private float _timeBetweenObtainance;
+        private float _counter;
+        public Resources resource => _resource;
+        public float amount => _amount;
+        public float UpdateCounter
         {
-            if (collider.gameObject != gameObject) // Ignora este objeto
+            get
             {
-                return true;
+                _counter -= Time.deltaTime;
+                // Debug.Log("Item: " + _resource.ToString() + "\n Counter: " + _counter.ToString());
+                return _counter;
             }
         }
-        return false;
+        public void ResetCounter() => _counter = _timeBetweenObtainance;
     }
-
-    Vector2 ColliderPosition(Vector2 collPosition)
+    public enum Resources
     {
-        Vector2 myPos = transform.position;
-        return myPos + collPosition;
-    }
-
-    // Dibuja un gizmo visual para la posición y tamaño en la grid (solo en el editor)
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.cyan;
-        if (grid)
-        {
-            foreach (var coll in buildginColls)
-            {
-                Gizmos.DrawWireCube(ColliderPosition(coll.position), new Vector3(coll.sizeX, coll.sizeY, 1));
-            }
-        }
+        food,
+        water,
+        electricity,
+        gold,
+        diamonds
     }
 }
-[System.Serializable]
-public class BuildingSize
-{
-    public Vector2 position;
-    public float sizeX, sizeY;
-}
-

@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
         else UIManager.instance = this;
     }
 
-    public void SetResource(BuildingConstruction.Resources resource, string resourceAmount)
+    public void SetResource(Building.Resources resource, string resourceAmount)
     {
         UIResourceTabItem tabItem = resourceTabItems.Find(x => x.resource == resource);
         if (tabItem)

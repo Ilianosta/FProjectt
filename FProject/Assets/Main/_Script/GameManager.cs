@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
         else GameManager.instance = this;
     }
 
-    public void SetResource(BuildingConstruction.Resources resource, float resourceAmount)
+    public void SetResource(Building.Resources resource, float resourceAmount)
     {
         PlayerResources playerResource = playerResources.Find(x => x.resource == resource);
         playerResource.amount += resourceAmount;
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     [ContextMenu("Generate base resources")]
     private void GenerateResourcesBase()
     {
-        foreach (BuildingConstruction.Resources value in Enum.GetValues(typeof(BuildingConstruction.Resources)))
+        foreach (Building.Resources value in Enum.GetValues(typeof(Building.Resources)))
         {
             playerResources.Add(new PlayerResources(value, 0));
         }
@@ -33,11 +33,11 @@ public class GameManager : MonoBehaviour
 [System.Serializable]
 public class PlayerResources
 {
-    public PlayerResources(BuildingConstruction.Resources resource, float amount)
+    public PlayerResources(Building.Resources resource, float amount)
     {
         this.resource = resource;
         this.amount = amount;
     }
-    public BuildingConstruction.Resources resource;
+    public Building.Resources resource;
     public float amount;
 }
